@@ -80,6 +80,7 @@ if (bgMesh && !reduceMotion && hasHover) {
 
 // Brilho de ferro em brasa que segue o cursor pela página inteira
 const cursorGlow = document.querySelector(".cursor-glow");
+const glowMarks = document.querySelectorAll(".section-mark, .hero-mark");
 if (cursorGlow && !reduceMotion && hasHover) {
   let targetX = window.innerWidth / 2;
   let targetY = window.innerHeight * 0.3;
@@ -100,6 +101,17 @@ if (cursorGlow && !reduceMotion && hasHover) {
     curY += (targetY - curY) * 0.12;
     document.documentElement.style.setProperty("--mx", `${curX}px`);
     document.documentElement.style.setProperty("--my", `${curY}px`);
+
+    // background-attachment: fixed não é confiável junto com background-clip:
+    // text (o Chrome/WebKit trata como local ao elemento), então calculamos a
+    // posição do brilho relativa a cada palavra fantasma na mão, em vez de
+    // depender do viewport inteiro.
+    glowMarks.forEach((mark) => {
+      const rect = mark.getBoundingClientRect();
+      mark.style.setProperty("--gx", `${curX - rect.left}px`);
+      mark.style.setProperty("--gy", `${curY - rect.top}px`);
+    });
+
     requestAnimationFrame(tickGlow);
   };
   requestAnimationFrame(tickGlow);

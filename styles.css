@@ -73,6 +73,17 @@ body {
 @keyframes drift2 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(4%, -3%) scale(1.05); } }
 @keyframes drift3 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-2%, -4%) scale(1.1); } }
 
+/* No mobile o viewport é bem menor, então o blur(110px) dilui os blobs
+   quase até sumir — aumenta o tamanho relativo e reduz o blur pra manter
+   o brilho visível */
+@media (max-width: 720px) {
+  .m-blob { filter: blur(60px); opacity: 0.65; }
+  .m1 { width: 95vw; height: 95vw; }
+  .m2 { width: 82vw; height: 82vw; }
+  .m3 { width: 90vw; height: 90vw; }
+  .m4 { width: 70vw; height: 70vw; }
+}
+
 /* Ember cursor glow — segue o mouse pela página inteira, remete ao brilho de uma forja */
 .cursor-glow {
   position: fixed;
@@ -81,7 +92,7 @@ body {
   pointer-events: none;
   mix-blend-mode: screen;
   background: radial-gradient(
-    480px circle at var(--mx, 50vw) var(--my, 30vh),
+    260px circle at var(--mx, 50vw) var(--my, 30vh),
     rgba(255, 138, 61, 0.18),
     rgba(91, 110, 245, 0.06) 42%,
     transparent 65%
@@ -90,6 +101,7 @@ body {
 
 @media (hover: none) {
   .cursor-glow { display: none; }
+  .section-mark, .hero-mark { background-image: none; -webkit-text-fill-color: initial; }
 }
 
 /* Spark burst — faíscas de forja ao clicar */
@@ -169,6 +181,24 @@ img { max-width: 100%; display: block; }
   user-select: none;
   white-space: nowrap;
   transform: translateY(-50%);
+}
+
+/* Reflexo do glow do mouse nas letras fantasma — o brilho "bate" nas bordas
+   quando o cursor passa por cima, como luz refletindo em metal gravado.
+   --gx/--gy são calculados em JS (getBoundingClientRect), já relativos a
+   cada elemento — background-attachment: fixed não é confiável junto com
+   background-clip: text entre navegadores, então evitamos essa combinação. */
+.section-mark,
+.hero-mark {
+  background-image: radial-gradient(
+    220px circle at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 226, 190, 0.95),
+    rgba(255, 138, 61, 0.55) 40%,
+    transparent 70%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .section-mark--left { left: -1%; }
@@ -379,7 +409,7 @@ img { max-width: 100%; display: block; }
   z-index: 1;
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
-  gap: 3rem;
+  gap: 1rem;
   align-items: center;
 }
 
@@ -507,7 +537,7 @@ img { max-width: 100%; display: block; }
   display: flex;
   align-items: center;
   width: max-content;
-  animation: marquee 26s linear infinite;
+  animation: marquee 42s linear infinite;
 }
 
 .marquee-track span {
@@ -849,18 +879,37 @@ img { max-width: 100%; display: block; }
 
   .hero-grid { grid-template-columns: 1fr; }
 
-  .hero-visual { order: -1; }
-  .code-window { max-width: 100%; margin: 0 auto 1rem; }
+  /* Sem a coluna lateral, a janela de código desce pra depois do texto
+     (ordem natural do markup) em vez de flutuar em cima */
+  .hero-visual { margin-top: 2rem; }
+  .code-window { max-width: 100%; margin: 0 auto; }
 
   .contato-grid { grid-template-columns: 1fr; }
+
+  /* Sem mouse de verdade, o brilho fica preso num ponto fixo em cima do
+     texto fantasma e atrapalha a leitura — desliga o reflexo no mobile */
+  .section-mark, .hero-mark {
+    background-image: none;
+    -webkit-text-fill-color: initial;
+  }
 }
 
 @media (max-width: 720px) {
   .site-header { padding: 1rem 16px; }
 
-  .hero { padding: 6rem 16px 3rem; }
+  .hero { padding: 5rem 16px 2.5rem; }
 
-  .contato { padding: 3rem 16px 5rem; }
+  /* Site compacto no mobile — as seções tinham o mesmo respiro generoso do
+     desktop (6-7rem), o que empilhado em uma coluna só fica espaçado demais */
+  .sobre, .fundador, .servicos, .projetos, .valores {
+    padding: 3.25rem 0;
+  }
+
+  .contato { padding: 2.5rem 16px 4rem; }
+
+  .marquee-strip { margin-top: 2rem; }
+
+  .site-footer { padding: 1.75rem 0 2.25rem; }
 
   .nav {
     position: absolute;
@@ -888,8 +937,6 @@ img { max-width: 100%; display: block; }
 
   .stat-row { gap: 1.5rem 2rem; }
 
-  .marquee-strip { margin-top: 2.5rem; }
-
   .footer-inner { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
 }
 
@@ -897,4 +944,5 @@ img { max-width: 100%; display: block; }
   .m-blob, .photo-frame, .marquee-track { animation: none !important; }
   .reveal { transition: none !important; opacity: 1 !important; transform: none !important; }
   .cursor-glow, .spark { display: none !important; }
+  .section-mark, .hero-mark { background-image: none !important; -webkit-text-fill-color: initial !important; }
 }
