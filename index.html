@@ -126,11 +126,7 @@
         <div class="container fundador-grid">
           <div class="fundador-photo">
             <div class="photo-frame">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
-                <path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/>
-                <circle cx="12" cy="14" r="3.4"/>
-              </svg>
-              <span>Foto do João</span>
+              <img src="assets/joao.jpeg" alt="Foto de João Pedro, fundador da Forge" loading="lazy" />
             </div>
           </div>
 
@@ -218,23 +214,17 @@
                 <span class="browser-dot"></span>
                 <span class="browser-dot"></span>
                 <span class="browser-dot"></span>
-                <span class="browser-url">royal-urban-next.vercel.app</span>
+                <span class="browser-url">forge-hotel-template.vercel.app</span>
               </div>
               <div class="photo-frame photo-frame--project">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
-                  <path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/>
-                  <circle cx="12" cy="14" r="3.4"/>
-                </svg>
-                <span>Screenshot em breve</span>
+                <img src="assets/forge-hotel-template.png" alt="Screenshot do site Forge Hotel Template" loading="lazy" />
               </div>
             </div>
 
             <div class="project-info">
-              <h3>Royal Urban Next</h3>
+              <h3>Hotel - Modelo</h3>
               <p>
-                Site institucional para hotelaria de luxo — apresentação da marca,
-                acomodações premium e experiência gastronômica, com navegação
-                imersiva e responsividade cuidada do mobile ao widescreen.
+                Site institucional para hotel de luxo com apresentação da marca, sistema de reservas e contato. A proposta visual é elegante e minimalista.
               </p>
               <ul class="tag-list">
                 <li>Next.js</li>
@@ -243,10 +233,44 @@
                 <li>TypeScript</li>
               </ul>
               <div class="project-links">
-                <a class="btn btn-accent" href="https://royal-urban-next.vercel.app/" target="_blank" rel="noopener">
+                <a class="btn btn-accent" href="https://forge-hotel-template.vercel.app/" target="_blank" rel="noopener">
                   Ver site ao vivo
                 </a>
-                <a class="link-arrow" href="https://github.com/nobreaz/royal-urban-next" target="_blank" rel="noopener">
+                <a class="link-arrow" href="https://github.com/nobreaz/forge-hotel-template" target="_blank" rel="noopener">
+                  Ver código <span>→</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="project-card reveal">
+            <div class="browser-mock">
+              <div class="browser-bar">
+                <span class="browser-dot"></span>
+                <span class="browser-dot"></span>
+                <span class="browser-dot"></span>
+                <span class="browser-url">forge-gym-template.vercel.app</span>
+              </div>
+              <div class="photo-frame photo-frame--project">
+                <img src="assets/forge-gym-template.png" alt="Screenshot do site Forge Gym Template" loading="lazy" />
+              </div>
+            </div>
+
+            <div class="project-info">
+              <h3>Academia - Modelo</h3>
+              <p>
+                Site institucional para academia com apresentação de planos, sistema de pagamentos e integração com whatsapp. A proposta é um visual moderno e dinâmico.
+              </p>
+              <ul class="tag-list">
+                <li>HTML</li>
+                <li>CSS</li>
+                <li>JavaScript</li>
+              </ul>
+              <div class="project-links">
+                <a class="btn btn-accent" href="https://forge-gym-template.vercel.app/" target="_blank" rel="noopener">
+                  Ver site ao vivo
+                </a>
+                <a class="link-arrow" href="https://github.com/nobreaz/forge-gym-template" target="_blank" rel="noopener">
                   Ver código <span>→</span>
                 </a>
               </div>
@@ -298,7 +322,7 @@
               <p>Forneça seus dados que retornaremos assim que possível.</p>
 
               <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
-                <input type="hidden" name="access_key" value="COLOQUE_SUA_CHAVE_WEB3FORMS_AQUI" />
+                <input type="hidden" name="access_key" value="6b547f2a-b030-4634-a3d1-4ea4b8006f29" />
                 <input type="hidden" name="subject" value="Novo contato pelo site da Forge" />
                 <input type="checkbox" name="botcheck" class="form-honeypot" tabindex="-1" autocomplete="off" />
 
@@ -309,7 +333,7 @@
 
                 <div class="form-row">
                   <label for="contact-phone">Telefone</label>
-                  <input type="tel" id="contact-phone" name="phone" required autocomplete="tel" />
+                  <input type="tel" id="contact-phone" name="phone" required autocomplete="tel" inputmode="numeric" maxlength="16" placeholder="(00) 00000-0000" />
                 </div>
 
                 <div class="form-row">

@@ -117,6 +117,24 @@ if (cursorGlow && !reduceMotion && hasHover) {
   requestAnimationFrame(tickGlow);
 }
 
+// Máscara do telefone — formata pra (XX) XXXXX-XXXX enquanto o usuário digita
+const phoneInput = document.getElementById("contact-phone");
+if (phoneInput) {
+  phoneInput.addEventListener("input", () => {
+    let v = phoneInput.value.replace(/\D/g, "").slice(0, 11);
+    if (v.length > 10) {
+      v = v.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+    } else if (v.length > 6) {
+      v = v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+    } else if (v.length > 2) {
+      v = v.replace(/^(\d{2})(\d{0,5})/, "($1) $2");
+    } else if (v.length > 0) {
+      v = v.replace(/^(\d*)/, "($1");
+    }
+    phoneInput.value = v;
+  });
+}
+
 // Formulário de contato — envia via Web3Forms sem sair da página
 const contactForm = document.getElementById("contact-form");
 if (contactForm) {
