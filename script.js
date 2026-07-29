@@ -140,33 +140,11 @@ if (cursorGlow && !reduceMotion) {
       { passive: true }
     );
   } else {
-    // Sem mouse, o brilho responde ao toque quando o dedo está na tela e,
-    // quando ocioso, apenas deriva bem devagar perto do centro — um efeito
-    // ambiente sutil, sem varrer a página inteira nem pular com o scroll
-    let lastTouchAt = 0;
-    const anchorX = window.innerWidth * 0.5;
-    const anchorY = window.innerHeight * 0.35;
-
-    window.addEventListener(
-      "touchmove",
-      (e) => {
-        const touch = e.touches[0];
-        if (!touch) return;
-        targetX = touch.clientX;
-        targetY = touch.clientY;
-        lastTouchAt = performance.now();
-      },
-      { passive: true }
-    );
-
-    const swayLoop = (t) => {
-      if (t - lastTouchAt > 500) {
-        targetX = anchorX + Math.sin(t / 9000) * window.innerWidth * 0.08;
-        targetY = anchorY + Math.cos(t / 12000) * window.innerHeight * 0.06;
-      }
-      requestAnimationFrame(swayLoop);
-    };
-    requestAnimationFrame(swayLoop);
+    // Sem mouse, o brilho fica parado perto da borda direita central — a
+    // área onde o polegar costuma ficar pra rolar a tela — só pra dar o
+    // reflexo nas letras do fundo, sem competir com o conteúdo em movimento
+    targetX = window.innerWidth * 0.88;
+    targetY = window.innerHeight * 0.5;
   }
 
   const tickGlow = () => {
