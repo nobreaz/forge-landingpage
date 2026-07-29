@@ -60,41 +60,120 @@ const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").match
 const hasHover = window.matchMedia("(hover: hover)").matches;
 
 // Blobs reagem sutilmente ao mouse (profundidade), sem empurrar o fundo pra fora da tela
-if (bgMesh && !reduceMotion && hasHover) {
+if (bgMesh && !reduceMotion) {
   const blobs = bgMesh.querySelectorAll(".m-blob");
-  window.addEventListener(
-    "mousemove",
-    (e) => {
-      const px = e.clientX / window.innerWidth - 0.5;
-      const py = e.clientY / window.innerHeight - 0.5;
+
+  if (hasHover) {
+    window.addEventListener(
+      "mousemove",
+      (e) => {
+        const px = e.clientX / window.innerWidth - 0.5;
+        const py = e.clientY / window.innerHeight - 0.5;
+        blobs.forEach((blob, i) => {
+          const depth = (i + 1) * 5;
+          // usa a propriedade "translate" (independente de "transform") pra não
+          // brigar com a animação de deriva que já roda em transform
+          blob.style.translate = `${px * depth}px ${py * depth}px`;
+        });
+      },
+      { passive: true }
+    );
+  } else {
+    // Sem mouse: o giroscópio do celular assume o papel de "cursor" — inclina
+    // o aparelho e o fundo ganha a mesma profundidade que teria no desktop
+    const applyTilt = (gamma, beta) => {
+      const nx = Math.max(-1, Math.min(1, gamma / 24));
+      const ny = Math.max(-1, Math.min(1, beta / 24));
       blobs.forEach((blob, i) => {
-        const depth = (i + 1) * 5;
-        // usa a propriedade "translate" (independente de "transform") pra não
-        // brigar com a animação de deriva que já roda em transform
-        blob.style.translate = `${px * depth}px ${py * depth}px`;
+        const depth = (i + 1) * 6;
+        blob.style.translate = `${nx * depth}px ${ny * depth}px`;
       });
-    },
-    { passive: true }
-  );
+    };
+
+    const onTilt = (e) => {
+      if (e.gamma === null || e.beta === null) return;
+      // recentraliza o beta em torno de ~35°, ângulo típico de quem segura o
+      // celular pra ler, pra tratar essa postura como "neutro"
+      applyTilt(e.gamma, e.beta - 35);
+    };
+
+    const enableTilt = () => {
+      window.addEventListener("deviceorientation", onTilt, { passive: true });
+    };
+
+    if (
+      typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function"
+    ) {
+      // iOS exige que a permissão seja pedida a partir de um gesto do usuário
+      const askPermission = () => {
+        window.removeEventListener("touchend", askPermission);
+        DeviceOrientationEvent.requestPermission()
+          .then((state) => {
+            if (state === "granted") enableTilt();
+          })
+          .catch(() => {});
+      };
+      window.addEventListener("touchend", askPermission, { once: true, passive: true });
+    } else if ("DeviceOrientationEvent" in window) {
+      enableTilt();
+    }
+  }
 }
 
 // Brilho de ferro em brasa que segue o cursor pela página inteira
 const cursorGlow = document.querySelector(".cursor-glow");
 const glowMarks = document.querySelectorAll(".section-mark, .hero-mark");
-if (cursorGlow && !reduceMotion && hasHover) {
+if (cursorGlow && !reduceMotion) {
   let targetX = window.innerWidth / 2;
   let targetY = window.innerHeight * 0.3;
   let curX = targetX;
   let curY = targetY;
 
-  window.addEventListener(
-    "mousemove",
-    (e) => {
-      targetX = e.clientX;
-      targetY = e.clientY;
-    },
-    { passive: true }
-  );
+  if (hasHover) {
+    window.addEventListener(
+      "mousemove",
+      (e) => {
+        targetX = e.clientX;
+        targetY = e.clientY;
+      },
+      { passive: true }
+    );
+  } else {
+    // Sem mouse, o brilho vira uma brasa viva: desce a página acompanhando o
+    // scroll (a leitura) e balança sozinha de um lado a outro, além de
+    // responder ao toque quando o dedo está na tela
+    let scrollRatio = 0;
+    let lastTouchAt = 0;
+
+    const updateScrollRatio = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      scrollRatio = max > 0 ? Math.max(0, Math.min(1, window.scrollY / max)) : 0;
+    };
+    window.addEventListener("scroll", updateScrollRatio, { passive: true });
+    updateScrollRatio();
+
+    window.addEventListener(
+      "touchmove",
+      (e) => {
+        const touch = e.touches[0];
+        if (!touch) return;
+        targetX = touch.clientX;
+        targetY = touch.clientY;
+        lastTouchAt = performance.now();
+      },
+      { passive: true }
+    );
+
+    const swayLoop = (t) => {
+      if (t - lastTouchAt > 500) {
+        targetY = window.innerHeight * (0.12 + scrollRatio * 0.7);
+        targetX = window.innerWidth * (0.5 + Math.sin(t / 2600) * 0.32);
+      }
+      requestAnimationFrame(swayLoop);
+    };
+    requestAnimationFrame(swayLoop);
+  }
 
   const tickGlow = () => {
     curX += (targetX - curX) * 0.12;
@@ -178,8 +257,8 @@ if (contactForm) {
   });
 }
 
-// Faíscas de forja ao clicar
-if (!reduceMotion && hasHover) {
+// Faíscas de forja ao clicar/tocar
+if (!reduceMotion) {
   document.addEventListener("click", (e) => {
     const count = 7;
     for (let i = 0; i < count; i++) {

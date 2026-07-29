@@ -100,8 +100,17 @@ body {
 }
 
 @media (hover: none) {
-  .cursor-glow { display: none; }
-  .section-mark, .hero-mark { background-image: none; -webkit-text-fill-color: initial; }
+  /* Sem cursor de verdade, o brilho passa a ser guiado por scroll/toque via
+     JS (ver script.js) — círculo um pouco maior porque o toque é menos
+     preciso que o mouse e a tela é menor */
+  .cursor-glow {
+    background: radial-gradient(
+      300px circle at var(--mx, 50vw) var(--my, 20vh),
+      rgba(255, 138, 61, 0.22),
+      rgba(91, 110, 245, 0.07) 42%,
+      transparent 65%
+    );
+  }
 }
 
 /* Spark burst — faíscas de forja ao clicar */
@@ -252,6 +261,13 @@ img { max-width: 100%; display: block; }
   box-shadow: 0 8px 30px rgba(255, 106, 61, 0.35);
 }
 
+/* Toque não tem :hover — dá o mesmo feedback de "acendeu" ao pressionar */
+.btn-accent:active {
+  filter: brightness(1.15);
+  transform: translateY(0) scale(0.96);
+  box-shadow: 0 4px 16px rgba(255, 106, 61, 0.45);
+}
+
 .btn-lg { padding: 1.1rem 2.25rem; font-size: 1.05rem; }
 
 .link-arrow {
@@ -265,7 +281,8 @@ img { max-width: 100%; display: block; }
 
 .link-arrow span { transition: transform 0.2s ease; }
 
-.link-arrow:hover span { transform: translateX(4px); }
+.link-arrow:hover span,
+.link-arrow:active span { transform: translateX(4px); }
 
 /* Header / nav */
 .site-header {
@@ -450,6 +467,37 @@ img { max-width: 100%; display: block; }
   margin-top: 1.75rem;
 }
 
+/* Sem hover pra dar um "aceso" no CTA, um brilho passa sozinho de tempos em
+   tempos pra puxar o olho — só no mobile, onde não existe estado de hover */
+@media (hover: none) {
+  .hero-actions .btn-accent {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-actions .btn-accent::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(
+      100deg,
+      transparent,
+      rgba(255, 255, 255, 0.45),
+      transparent
+    );
+    animation: cta-shine 3.6s ease-in-out infinite;
+    animation-delay: 1.2s;
+  }
+
+  @keyframes cta-shine {
+    0%, 25% { left: -60%; }
+    55%, 100% { left: 130%; }
+  }
+}
+
 .hero-visual { position: relative; }
 
 .hero-visual::before {
@@ -616,7 +664,8 @@ img { max-width: 100%; display: block; }
   transition: filter 0.5s ease, transform 0.5s ease;
 }
 
-.fundador-photo .photo-frame:hover img {
+.fundador-photo .photo-frame:hover img,
+.fundador-photo .photo-frame:active img {
   filter: grayscale(0);
   transform: scale(1.08);
 }
@@ -649,7 +698,8 @@ img { max-width: 100%; display: block; }
   flex-shrink: 0;
 }
 
-.fundador-social a:hover {
+.fundador-social a:hover,
+.fundador-social a:active {
   color: var(--text);
   border-color: var(--accent);
   background: rgba(255, 106, 61, 0.08);
@@ -674,7 +724,8 @@ img { max-width: 100%; display: block; }
 
 .service-list .service-row:last-child { border-bottom: 1px solid var(--border); }
 
-.service-row:hover {
+.service-row:hover,
+.service-row:active {
   padding-left: 1rem;
   border-color: var(--border-strong);
 }
@@ -707,6 +758,12 @@ img { max-width: 100%; display: block; }
   margin-top: 2rem;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.project-card:active {
+  border-color: var(--border-strong);
+  transform: scale(0.99);
 }
 
 .browser-mock {
@@ -802,7 +859,8 @@ img { max-width: 100%; display: block; }
 
 .valores-flow span:not(.slash) { transition: color 0.15s ease; }
 
-.valores-flow span:not(.slash):hover { color: var(--text); }
+.valores-flow span:not(.slash):hover,
+.valores-flow span:not(.slash):active { color: var(--text); }
 
 .valores-flow .slash { color: var(--accent); margin: 0 0.5rem; }
 
@@ -944,13 +1002,6 @@ img { max-width: 100%; display: block; }
 
   .contato-whats { flex-wrap: wrap; }
   .contato-whats .btn { width: 100%; }
-
-  /* Sem mouse de verdade, o brilho fica preso num ponto fixo em cima do
-     texto fantasma e atrapalha a leitura — desliga o reflexo no mobile */
-  .section-mark, .hero-mark {
-    background-image: none;
-    -webkit-text-fill-color: initial;
-  }
 }
 
 @media (max-width: 720px) {
@@ -1037,4 +1088,5 @@ img { max-width: 100%; display: block; }
   .cursor-glow, .spark { display: none !important; }
   .section-mark, .hero-mark { background-image: none !important; -webkit-text-fill-color: initial !important; }
   .nav-toggle span, .nav, .nav a { transition: none !important; }
+  .hero-actions .btn-accent::after { display: none !important; }
 }
