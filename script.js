@@ -140,18 +140,12 @@ if (cursorGlow && !reduceMotion) {
       { passive: true }
     );
   } else {
-    // Sem mouse, o brilho vira uma brasa viva: desce a página acompanhando o
-    // scroll (a leitura) e balança sozinha de um lado a outro, além de
-    // responder ao toque quando o dedo está na tela
-    let scrollRatio = 0;
+    // Sem mouse, o brilho responde ao toque quando o dedo está na tela e,
+    // quando ocioso, apenas deriva bem devagar perto do centro — um efeito
+    // ambiente sutil, sem varrer a página inteira nem pular com o scroll
     let lastTouchAt = 0;
-
-    const updateScrollRatio = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      scrollRatio = max > 0 ? Math.max(0, Math.min(1, window.scrollY / max)) : 0;
-    };
-    window.addEventListener("scroll", updateScrollRatio, { passive: true });
-    updateScrollRatio();
+    const anchorX = window.innerWidth * 0.5;
+    const anchorY = window.innerHeight * 0.35;
 
     window.addEventListener(
       "touchmove",
@@ -167,8 +161,8 @@ if (cursorGlow && !reduceMotion) {
 
     const swayLoop = (t) => {
       if (t - lastTouchAt > 500) {
-        targetY = window.innerHeight * (0.12 + scrollRatio * 0.7);
-        targetX = window.innerWidth * (0.5 + Math.sin(t / 2600) * 0.32);
+        targetX = anchorX + Math.sin(t / 9000) * window.innerWidth * 0.08;
+        targetY = anchorY + Math.cos(t / 12000) * window.innerHeight * 0.06;
       }
       requestAnimationFrame(swayLoop);
     };
