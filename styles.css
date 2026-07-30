@@ -459,6 +459,12 @@ img { max-width: 100%; display: block; }
   max-width: 520px;
 }
 
+.section-intro {
+  font-size: 1.05rem;
+  max-width: 560px;
+  margin-top: -0.5rem;
+}
+
 .hero-actions {
   display: flex;
   align-items: center;
