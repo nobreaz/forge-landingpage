@@ -461,7 +461,7 @@ img { max-width: 100%; display: block; }
 
 .section-intro {
   font-size: 1.05rem;
-  max-width: 560px;
+  max-width: 800px;
   margin-top: -0.5rem;
 }
 
@@ -628,17 +628,6 @@ img { max-width: 100%; display: block; }
   to { transform: translateX(-50%); }
 }
 
-/* Sobre */
-.sobre { position: relative; overflow: hidden; padding: 7rem 0; }
-
-.sobre-grid {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 2rem;
-}
-
-.sobre h2 { font-size: clamp(1.8rem, 3.2vw, 2.4rem); max-width: 720px; }
-
 .mission-quote {
   border-left: 2px solid var(--accent);
   padding-left: 1.5rem;
@@ -714,7 +703,7 @@ img { max-width: 100%; display: block; }
 /* Serviços */
 .servicos { position: relative; overflow: hidden; padding: 6rem 0; border-top: 1px solid var(--border); }
 
-.projetos h2, .valores h2 { font-size: clamp(1.8rem, 3.2vw, 2.4rem); }
+.servicos h2, .projetos h2, .valores h2 { font-size: clamp(1.8rem, 3.2vw, 2.4rem); max-width: 720px; }
 
 .service-list { margin-top: 1rem; }
 
@@ -748,6 +737,11 @@ img { max-width: 100%; display: block; }
 }
 
 .service-row p { margin: 0; }
+
+/* Como funciona — reaproveita .service-row/.service-list da seção Serviços,
+   é o mesmo padrão de linha numerada */
+.funciona { position: relative; overflow: hidden; padding: 6rem 0; border-top: 1px solid var(--border); }
+.funciona h2 { font-size: clamp(1.8rem, 3.2vw, 2.4rem); max-width: 720px; }
 
 /* Projetos */
 .projetos { position: relative; overflow: hidden; padding: 6rem 0; border-top: 1px solid var(--border); }
@@ -851,6 +845,36 @@ img { max-width: 100%; display: block; }
   flex-wrap: wrap;
 }
 
+/* CTA intermediário — reaparece depois de Serviços e de Projetos, os dois
+   pontos onde o visitante acabou de se convencer e hoje não tinha porta de saída */
+.mid-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-top: 2.5rem;
+  padding: 1.75rem 2rem;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+.mid-cta p {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--text);
+  max-width: 380px;
+}
+
+@media (max-width: 720px) {
+  .mid-cta { flex-direction: column; align-items: stretch; text-align: center; padding: 1.5rem; }
+  .mid-cta p { max-width: none; }
+  .mid-cta .btn { width: 100%; }
+}
+
 /* Valores */
 .valores { position: relative; overflow: hidden; padding: 6rem 0; border-top: 1px solid var(--border); }
 
@@ -869,6 +893,69 @@ img { max-width: 100%; display: block; }
 .valores-flow span:not(.slash):active { color: var(--text); }
 
 .valores-flow .slash { color: var(--accent); margin: 0 0.5rem; }
+
+/* FAQ */
+.faq { position: relative; overflow: hidden; padding: 6rem 0; border-top: 1px solid var(--border); }
+.faq h2 { font-size: clamp(1.8rem, 3.2vw, 2.4rem); max-width: 720px; }
+
+.faq-list { margin-top: 1rem; }
+
+.faq-item {
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.faq-list .faq-item:last-child { border-bottom: 1px solid var(--border); }
+
+.faq-item summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--text);
+}
+
+.faq-item summary::-webkit-details-marker { display: none; }
+
+.faq-item summary::after {
+  content: "+";
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  color: var(--accent);
+  transition: transform 0.2s ease;
+}
+
+.faq-item[open] summary::after { transform: rotate(45deg); }
+
+/* Altura animada via JS (ver script.js) — o navegador não anima display:none
+   do <details> nativo, então o JS mede scrollHeight e faz a transição aqui */
+.faq-answer {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+
+/* Sem JS (ou com JS desabilitado), o <details> nativo ainda funciona:
+   ao abrir, o navegador tira o display:none e essa regra garante que o
+   conteúdo apareça inteiro, só sem a animação de altura */
+.faq-item[open] > .faq-answer {
+  height: auto;
+}
+
+.faq-answer p {
+  margin: 1rem 0 0;
+  max-width: 900px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-answer { transition: none !important; }
+}
 
 /* Contato */
 .contato { position: relative; overflow: hidden; padding: 4rem 24px 7rem; border-top: 1px solid var(--border); }
@@ -943,6 +1030,7 @@ img { max-width: 100%; display: block; }
 }
 
 .form-row input,
+.form-row select,
 .form-row textarea {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
@@ -955,12 +1043,17 @@ img { max-width: 100%; display: block; }
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
+.form-row select { color-scheme: dark; }
+
 .form-row input:focus,
+.form-row select:focus,
 .form-row textarea:focus {
   outline: none;
   border-color: var(--accent);
   background: var(--bg-page);
 }
+
+.form-optional { text-transform: none; letter-spacing: 0; color: var(--text-muted); font-weight: 400; }
 
 .form-honeypot { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
 
@@ -976,6 +1069,37 @@ img { max-width: 100%; display: block; }
 .form-status.is-success { color: #7CD992; }
 .form-status.is-error { color: #FF8A7A; }
 
+/* Botão flutuante de WhatsApp — só no mobile, onde o header CTA some (ver .header-cta em @media 720px) */
+.whatsapp-float {
+  display: none;
+  position: fixed;
+  z-index: 90;
+  right: 16px;
+  bottom: 16px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #25D366;
+  color: #0A0E1A;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.whatsapp-float svg { width: 27px; height: 27px; }
+
+.whatsapp-float:active {
+  transform: scale(0.94);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 720px) {
+  .whatsapp-float { display: flex; }
+  /* Sobe pra não tapar o botão "Enviar mensagem", que ocupa a largura toda no mobile */
+  .contato { padding-bottom: 6rem; }
+}
+
 /* Footer */
 .site-footer { padding: 2.5rem 0 3rem; border-top: 1px solid var(--border); }
 
@@ -990,8 +1114,6 @@ img { max-width: 100%; display: block; }
 /* Responsive */
 @media (max-width: 860px) {
   .project-card { grid-template-columns: 1fr; }
-
-  .sobre-grid { grid-template-columns: 1fr; gap: 1rem; }
 
   .fundador-grid { grid-template-columns: 1fr; gap: 1.5rem; }
   .fundador-photo .photo-frame { max-width: 220px; margin: 0 auto; }
@@ -1017,7 +1139,7 @@ img { max-width: 100%; display: block; }
 
   /* Site compacto no mobile — as seções tinham o mesmo respiro generoso do
      desktop (6-7rem), o que empilhado em uma coluna só fica espaçado demais */
-  .sobre, .fundador, .servicos, .projetos, .valores {
+  .fundador, .servicos, .funciona, .projetos, .valores, .faq {
     padding: 3.25rem 0;
   }
 
@@ -1078,7 +1200,6 @@ img { max-width: 100%; display: block; }
   .nav.open a:nth-child(3) { transition-delay: 0.09s; }
   .nav.open a:nth-child(4) { transition-delay: 0.12s; }
   .nav.open a:nth-child(5) { transition-delay: 0.15s; }
-
   .header-cta { display: none; }
 
   .nav-toggle { display: flex; }

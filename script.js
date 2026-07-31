@@ -1,5 +1,16 @@
 document.getElementById("ano").textContent = new Date().getFullYear();
 
+// Eventos de conversão — GA4 (troque o Measurement ID no <head> pra ativar de verdade)
+function trackEvent(name, params) {
+  if (typeof gtag === "function") gtag("event", name, params);
+}
+
+document.querySelectorAll('a[href*="wa.me"]').forEach((link) => {
+  link.addEventListener("click", () => {
+    trackEvent("whatsapp_click", { location: link.closest("section, header")?.id || "unknown" });
+  });
+});
+
 const navToggle = document.getElementById("nav-toggle");
 const nav = document.getElementById("nav");
 
@@ -216,6 +227,7 @@ if (contactForm) {
       if (data.success) {
         status.textContent = "Mensagem enviada. Retorno em breve.";
         status.className = "form-status is-success";
+        trackEvent("form_submit", { form: "contato" });
         contactForm.reset();
       } else {
         throw new Error(data.message || "Erro ao enviar");
@@ -245,5 +257,48 @@ if (!reduceMotion) {
       spark.addEventListener("animationend", () => spark.remove());
       document.body.appendChild(spark);
     }
+  });
+}
+
+// FAQ com animação de abrir/fechar — o <details> nativo não anima a
+// transição de display:none, então a altura é medida e animada aqui
+if (!reduceMotion) {
+  document.querySelectorAll(".faq-item").forEach((item) => {
+    const summary = item.querySelector("summary");
+    const answer = item.querySelector(".faq-answer");
+
+    summary.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      if (item.hasAttribute("open")) {
+        const startHeight = answer.scrollHeight;
+        answer.style.height = `${startHeight}px`;
+        requestAnimationFrame(() => {
+          answer.style.height = "0px";
+        });
+        answer.addEventListener(
+          "transitionend",
+          () => {
+            item.removeAttribute("open");
+            answer.style.height = "";
+          },
+          { once: true }
+        );
+      } else {
+        item.setAttribute("open", "");
+        const targetHeight = answer.scrollHeight;
+        answer.style.height = "0px";
+        requestAnimationFrame(() => {
+          answer.style.height = `${targetHeight}px`;
+        });
+        answer.addEventListener(
+          "transitionend",
+          () => {
+            answer.style.height = "";
+          },
+          { once: true }
+        );
+      }
+    });
   });
 }
